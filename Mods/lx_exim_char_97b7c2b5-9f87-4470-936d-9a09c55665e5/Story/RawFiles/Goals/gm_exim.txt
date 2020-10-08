@@ -3,13 +3,6 @@ SubGoalCombiner SGC_AND
 INITSECTION
 
 KBSECTION
-//Lua reload at gamestart
-IF
-GameStarted(_, _)
-THEN
-NRD_LuaReset(1);
-NRD_DebugLog("Game Started");
-
 //Give saving and loading stones in Adventure mode
 IF
 GameStarted(_, 0)
@@ -73,47 +66,47 @@ IF
 StoryEvent((CHARACTERGUID)_Char, "LX_Save_Character")
 AND
 GetPosition(_Char, _X, _Y, _Z)
-AND
-TemporaryCharacterCreateAtPosition(_X, _Y, _Z, "25611432-e5e4-482a-8f5d-196c9e90001e", 0, _Temp)
+// AND
+// TemporaryCharacterCreateAtPosition(_X, _Y, _Z, "25611432-e5e4-482a-8f5d-196c9e90001e", 0, _Temp)
 AND
 //LX_EXT_UnequipCharacter(_Char) //Unequip items so skill save won't take skills given by items
 LX_EXT_SaveHotbar(_Char) //Also unequip items
-AND
-LX_EXT_InitSavingInventory(_Char)
-AND
-QRY_LX_Get_Inventory((GUIDSTRING)_Char)
+// AND
+// LX_EXT_InitSavingInventory(_Char)
+// AND
+// QRY_LX_Get_Inventory((GUIDSTRING)_Char)
 THEN
-SetVarString(_Temp, "LX_Skills_Save", "");
-DB_EXIM_Saving_Char((CHARACTERGUID)_Char, _Temp);
+// SetVarString(_Temp, "LX_Skills_Save", "");
+DB_EXIM_Saving_Char((CHARACTERGUID)_Char);
 SetVarString(_Char, "LX_Inventory", "");
-CharacterTransformFromCharacter(_Temp, (CHARACTERGUID)_Char, 1, 1, 1, 1, 1, 1, 0); //Skills saving
+// CharacterTransformFromCharacter(_Temp, (CHARACTERGUID)_Char, 1, 1, 1, 1, 1, 1, 0); //Skills saving
 TimerLaunch("LX_Saving_Process", 500);
 
 //Saving character skills
-IF
-SkillAdded(_Char, _Skill, _)
-AND
-DB_EXIM_Saving_Char(_, _Char)
-AND
-GetVarString(_Char, "LX_Skills_Save", _SkillsString)
-AND
-StringConcatenate(_SkillsString, _Skill, _SkillsString2)
-AND
-StringConcatenate(_SkillsString2, "<br>", _SkillsStringFinal)
-THEN
-SetVarString(_Char, "LX_Skills_Save", _SkillsStringFinal);
+// IF
+// SkillAdded(_Char, _Skill, _)
+// AND
+// DB_EXIM_Saving_Char(_, _Char)
+// AND
+// GetVarString(_Char, "LX_Skills_Save", _SkillsString)
+// AND
+// StringConcatenate(_SkillsString, _Skill, _SkillsString2)
+// AND
+// StringConcatenate(_SkillsString2, "<br>", _SkillsStringFinal)
+// THEN
+// SetVarString(_Char, "LX_Skills_Save", _SkillsStringFinal);
 
 IF
 TimerFinished("LX_Saving_Process")
 AND
-DB_EXIM_Saving_Char(_Char, _Temp)
+DB_EXIM_Saving_Char(_Char)
 AND
 CharacterGetDisplayName(_Char, _, _Name)
 THEN
 DebugBreak("Saving char...");
 LX_EXT_SaveInventory(_Char);
-LX_EXT_SaveCharacterData(_Char, _Name, _Temp);
-NOT DB_EXIM_Saving_Char(_Char, _Temp);
+LX_EXT_SaveCharacterData(_Char);
+NOT DB_EXIM_Saving_Char(_Char);
 SetVarString(_Char, "LX_Skills_Save", ""); //Empty skill list.
 SetVarString(_Char, "LX_Hotbar", "");
 
@@ -186,7 +179,7 @@ GlobalFlagSet("Inventory_Count_Done")
 AND
 DB_EXIM_Counting_Inventory(_Holder)
 AND
-DB_EXIM_Saving_Char(_Char, _)
+DB_EXIM_Saving_Char(_Char)
 THEN
 NOT DB_EXIM_Counting_Inventory(_Holder);
 GlobalClearFlag("Inventory_Count_Done");

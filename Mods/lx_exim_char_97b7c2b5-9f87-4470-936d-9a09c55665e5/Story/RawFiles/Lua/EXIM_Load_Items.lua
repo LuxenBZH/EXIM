@@ -44,13 +44,13 @@ function LoadInventory(container, inventory, first)
 		
 		local customStrings = LoadItemCustomStrings(eq, equipment["customname"], equipment["customdesc"], nil)
 		
+		local finishedEq = EquipmentClone(eq, 1, quality, equipment["level"], equipment["deltamods"], equipment["seed"], equipment["statsid"], customStrings, false)
+
 		if HasRunes(equipment["runes"]) == true then
 			for slot, rune in pairs(equipment["runes"]) do
 				ItemInsertRune(container, finishedEq, rune, tonumber(slot))
 			end
 		end
-		
-		local finishedEq = EquipmentClone(eq, 1, quality, equipment["level"], equipment["deltamods"], equipment["seed"], equipment["statsid"], customStrings, false)
 	
 		ItemToInventory(finishedEq, container, 1)
 		
@@ -169,6 +169,8 @@ function ItemSetBoosts(item, boosts)
 			for abi, v in pairs(value) do NRD_ItemSetPermanentBoostAbility(item, abi, v) end	
 		elseif boost == "WeaponRange" or boost == "CleavePercentage" then
 			NRD_ItemSetPermanentBoostReal(item, boost, value)
+		elseif boost == "Skills" or boost == "ItemColor" then
+			NRD_ItemSetPermanentBoostString(item, boost, value)
 		else
 			NRD_ItemSetPermanentBoostInt(item, boost, value)
 		end

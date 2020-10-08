@@ -1,9 +1,9 @@
 {
-    "RequiredExtensionVersion": 42,
+    "RequiredExtensionVersion": 52,
+    "ModTable" : "EXIM",
     "FeatureFlags": [
         "OsirisExtensions",
         "Lua",
-        "CustomStats",
 		"DisableFolding"
     ]
 }

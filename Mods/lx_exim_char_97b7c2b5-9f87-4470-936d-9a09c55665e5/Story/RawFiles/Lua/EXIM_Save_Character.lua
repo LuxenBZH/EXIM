@@ -1,4 +1,69 @@
-function SaveCharacterData(character, charName, tempChar)
+Ext.Require("EXIM_Save_Items.lua")
+
+function ParseExtData(data)
+	if type(data) ~= "table" then return end
+	for i,cont in pairs(data) do
+		if type(cont) == "string" then
+			local parsed = Ext.JsonParse(cont)
+			data[i] = parsed
+			ParseExtData(parsed)
+		end
+	end
+end
+
+function ClearSpecialCharacters(str)
+	local cleared = ""
+	--cleared = str:gsub("%s+", "_")
+	--cleared = str:gsub("é", "e")
+	cleared = str:gsub("[^%w-_]", "") -- Thanks Zerd. I hate regex so much.
+	-- cleared = string.gsub(cleared, "[^%w-]", "_")
+	local i = 0
+	for word in str:gmatch("[A-Z]*[a-z]*[1-9]*") do
+		if i == 0 then
+			cleared = word
+		else
+			cleared = cleared.."_"..word 
+		end
+		i = i + 1
+	end
+	cleared = string.gsub(cleared, "_+", "_")
+	return cleared
+end
+
+function ParseSkills(character)
+	skills = GetVarString(character, "LX_Skills_Save")
+	if skills ~= nil then
+		skills = skills:gsub("<br>", ",")
+		skills = SplitString(skills, ",")
+		SetVarString(character, "LX_Skills_Save", "")
+	else
+		return {}
+	end
+	return skills
+end
+
+function GetHotbar(character)
+	local hotbar = {}
+	local i = 0
+	while i < 144 do
+		local slot = {"Skill", NRD_SkillBarGetSkill(character, i)}
+		if slot[2] == nil then
+			local shortcut = NRD_SkillBarGetItem(character, i)
+			if shortcut ~= nil then
+				local item = GetTemplate(shortcut)
+				slot = {"Item", item} 
+			end
+		end
+		if slot[2] ~= nil then hotbar[i] = slot end
+		i = i+1
+	end
+	SetVarString(character, "LX_Hotbar", Ext.JsonStringify(hotbar))
+	UnequipCharacter(character)
+	return true
+end
+
+function SaveCharacterData(character)
+	local char = Ext.GetCharacter(character)
 	print("Storing character data...")
 	local data = {}
 	-- Misc
@@ -69,9 +134,16 @@ function SaveCharacterData(character, charName, tempChar)
 	data["talents"] = talents
 	
 	--SaveEquippedItems(character)
+	--Save inventory
+	InitSavingInventory(character)
+	local inventory = char.GetInventoryItems(char)
+	for i,item in pairs(inventory) do
+		Ext.Print(character, item)
+		StoreHolderItem(character, item)
+	end
 	
 	--Save part
-	local clearedName = ClearSpecialCharacters(charName)
+	local clearedName = ClearSpecialCharacters(char.DisplayName)
 	local path = clearedName..".charsave"
 	print(path)
 	local characterData = {}
@@ -79,7 +151,7 @@ function SaveCharacterData(character, charName, tempChar)
 	characterData["hotbar"] = Ext.JsonParse(GetVarString(character, "LX_Hotbar"))
 	characterData["data"] = data
 	characterData["inventory"] = inventoryTemplates
-	local skills = ParseSkills(tempChar)
+	local skills = char.GetSkills(char)
 	characterData["skills"] = skills
 	
 	-- Extension data
@@ -91,72 +163,9 @@ function SaveCharacterData(character, charName, tempChar)
 		characterData["ext"] = extData 
 	end
 	local jsonData = Ext.JsonStringify(characterData)
-	local content = jsonData--..skills--..equipment
+	local content = jsonData
 
 	NRD_SaveFile(path, content)
-	RemoveTemporaryCharacter(tempChar)
+	--RemoveTemporaryCharacter(tempChar)
 	ReequipCharacter(character)
 end
-
-function ParseExtData(data)
-	if type(data) ~= "table" then return end
-	for i,cont in pairs(data) do
-		if type(cont) == "string" then
-			local parsed = Ext.JsonParse(cont)
-			data[i] = parsed
-			ParseExtData(parsed)
-		end
-	end
-end
-
-function ClearSpecialCharacters(str)
-	local cleared = ""
-	--cleared = str:gsub("%s+", "_")
-	--cleared = str:gsub("é", "e")
-	cleared = str:gsub("[^%w-_]", "") -- Thanks Zerd. I hate regex so much.
-	-- cleared = string.gsub(cleared, "[^%w-]", "_")
-	local i = 0
-	for word in str:gmatch("[A-Z]*[a-z]*[1-9]*") do
-		if i == 0 then
-			cleared = word
-		else
-			cleared = cleared.."_"..word 
-		end
-		i = i + 1
-	end
-	cleared = string.gsub(cleared, "_+", "_")
-	return cleared
-end
-
-function ParseSkills(character)
-	skills = GetVarString(character, "LX_Skills_Save")
-	if skills ~= nil then
-		skills = skills:gsub("<br>", ",")
-		skills = SplitString(skills, ",")
-		SetVarString(character, "LX_Skills_Save", "")
-	else
-		return {}
-	end
-	return skills
-end
-
-function GetHotbar(character)
-	local hotbar = {}
-	local i = 0
-	while i < 144 do
-		local slot = {"Skill", NRD_SkillBarGetSkill(character, i)}
-		if slot[2] == nil then
-			local shortcut = NRD_SkillBarGetItem(character, i)
-			if shortcut ~= nil then
-				local item = GetTemplate(shortcut)
-				slot = {"Item", item} 
-			end
-		end
-		if slot[2] ~= nil then hotbar[i] = slot end
-		i = i+1
-	end
-	SetVarString(character, "LX_Hotbar", Ext.JsonStringify(hotbar))
-	UnequipCharacter(character)
-	return true
-end
-

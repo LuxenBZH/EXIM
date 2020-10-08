@@ -1,7 +1,7 @@
-Ext.Require("lx_exim_char_97b7c2b5-9f87-4470-936d-9a09c55665e5", "EXIM_Save_Character.lua")
-Ext.Require("lx_exim_char_97b7c2b5-9f87-4470-936d-9a09c55665e5", "EXIM_Load_Character.lua")
-Ext.Require("lx_exim_char_97b7c2b5-9f87-4470-936d-9a09c55665e5", "EXIM_Save_Items.lua")
-Ext.Require("lx_exim_char_97b7c2b5-9f87-4470-936d-9a09c55665e5", "EXIM_Load_Items.lua")
+Ext.Require("EXIM_Save_Character.lua")
+Ext.Require("EXIM_Load_Character.lua")
+Ext.Require("EXIM_Save_Items.lua")
+Ext.Require("EXIM_Load_Items.lua")
 
 ---- Helper functions ---
 function Civil()
@@ -29,6 +29,7 @@ function Abilities()
 	"Leadership",
 	"MagicArmorMastery",
 	"Necromancy",
+	"PainReflection",
 	"Perseverance",
 	"PhysicalArmorMastery",
 	"Pickpocket",
@@ -194,7 +195,7 @@ function ItemBoosts()
 	"FinesseBoost",
 	"IntelligenceBoost",
 	"ConstitutionBoost",
-	"Memory",
+	"MemoryBoost",
 	"WitsBoost",
 	"SightBoost",
 	"HearingBoost",
@@ -215,7 +216,7 @@ function ItemBoosts()
 	"WaterResistance",
 	"EarthResistance",
 	"PoisonResistance",
-	"TenebriumResistance",
+	"ShadowResistance",
 	"PiercingResistance",
 	"CorrosiveResistance",
 	"PhysicalResistance",
@@ -228,23 +229,40 @@ function ItemBoosts()
 	"MaxSummons",
 	"Value",
 	"Weight",
-	"DamageType",
-	"MinDamage",
-	"MaxDamage",
-	"DamageBoost",
-	"DamageFromBase",
-	"CriticalDamage",
-	"WeaponRange",
-	"CleaveAngle",
-	"CleavePercentage",
-	"AttackAPCost",
-	"ArmorValue",
-	"ArmorBoost",
-	"MagicArmorValue",
-	"MagicArmorBoost",
-	"Blocking"
+	"Skills",
+	"ItemColor"
 	}
 	return boosts
+end
+
+function WeaponBoosts()
+	return {
+		"DamageType",
+		"MinDamage",
+		"MaxDamage",
+		"DamageBoost",
+		"DamageFromBase",
+		"CriticalDamage",
+		"WeaponRange",
+		"CleaveAngle",
+		"CleavePercentage",
+		"AttackAPCost",
+	}
+end
+
+function ShieldBoosts()
+	return {
+		"Blocking"
+	}
+end
+
+function ArmorBoosts()
+	return {
+		"ArmorValue",
+		"ArmorBoost",
+		"MagicArmorValue",
+		"MagicArmorBoost"
+	}
 end
 
 function SplitString(str, sep)
@@ -263,7 +281,7 @@ Ext.NewCall(ParseInventoryForContainers, "LX_EXT_CheckInventory", "(GUIDSTRING)_
 --Ext.NewQuery(UnequipCharacter, "LX_EXT_UnequipCharacter", "(CHARACTERGUID)_Character");
 Ext.NewCall(StoreHolderItem, "LX_EXT_StoreHolderItem", "(GUIDSTRING)_Holder, (ITEMGUID)_Item");
 Ext.NewCall(SavingInventoryStringManagement, "LX_EXT_SaveInventory", "(CHARACTERGUID)_Character");
-Ext.NewCall(SaveCharacterData, "LX_EXT_SaveCharacterData", "(CHARACTERGUID)_Character, (STRING)_Name, (CHARACTERGUID)_TempChar");
+Ext.NewCall(SaveCharacterData, "LX_EXT_SaveCharacterData", "(CHARACTERGUID)_Character");
 Ext.NewCall(ParsePieceEquipment, "LX_EXT_ParsePieceEquipment", "(CHARACTERGUID)_Character, (ITEMGUID)_Item");
 Ext.NewCall(LoadHotbar, "LX_EXT_LoadHotbar", "(CHARACTERGUID)_Character");
 Ext.NewQuery(GetHotbar, "LX_EXT_SaveHotbar", "(CHARACTERGUID)_Character");

@@ -136,7 +136,7 @@ function LoadSkills(character)
 	UnequipCharacter(character)
 	local skills = ParseSkills(character)
 	for i,skill in pairs(skills) do
-		Ext.Print(skill)
+		--Ext.Print(skill)
 		CharacterRemoveSkill(character, skill)
 	end
 	
