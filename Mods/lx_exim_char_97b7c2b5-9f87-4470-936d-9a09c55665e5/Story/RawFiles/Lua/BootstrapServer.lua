@@ -283,8 +283,8 @@ Ext.NewCall(StoreHolderItem, "LX_EXT_StoreHolderItem", "(GUIDSTRING)_Holder, (IT
 Ext.NewCall(SavingInventoryStringManagement, "LX_EXT_SaveInventory", "(CHARACTERGUID)_Character");
 Ext.NewCall(SaveCharacterData, "LX_EXT_SaveCharacterData", "(CHARACTERGUID)_Character");
 Ext.NewCall(ParsePieceEquipment, "LX_EXT_ParsePieceEquipment", "(CHARACTERGUID)_Character, (ITEMGUID)_Item");
-Ext.NewCall(LoadHotbar, "LX_EXT_LoadHotbar", "(CHARACTERGUID)_Character");
-Ext.NewQuery(GetHotbar, "LX_EXT_SaveHotbar", "(CHARACTERGUID)_Character");
+-- Ext.NewCall(LoadHotbar, "LX_EXT_LoadHotbar", "(CHARACTERGUID)_Character");
+-- Ext.NewQuery(GetHotbar, "LX_EXT_SaveHotbar", "(CHARACTERGUID)_Character");
 
 Ext.NewCall(LoadCharacter, "LX_EXT_LoadCharacter", "(CHARACTERGUID)_Character");
 Ext.NewCall(LoadInventory, "LX_EXT_LoadInventory", "(CHARACTERGUID)_Character, (STRING)_Data1, (STRING)_Data2");

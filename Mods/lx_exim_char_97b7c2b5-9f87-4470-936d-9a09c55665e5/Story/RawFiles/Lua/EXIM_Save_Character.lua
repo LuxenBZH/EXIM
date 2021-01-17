@@ -42,7 +42,7 @@ function ParseSkills(character)
 	return skills
 end
 
-function GetHotbar(character)
+local function GetHotbar(character)
 	local hotbar = {}
 	local i = 0
 	while i < 144 do
@@ -57,9 +57,8 @@ function GetHotbar(character)
 		if slot[2] ~= nil then hotbar[i] = slot end
 		i = i+1
 	end
-	SetVarString(character, "LX_Hotbar", Ext.JsonStringify(hotbar))
-	UnequipCharacter(character)
-	return true
+	-- UnequipCharacter(character)
+	return hotbar
 end
 
 function SaveCharacterData(character)
@@ -75,7 +74,30 @@ function SaveCharacterData(character)
 	misc["talentPoints"] = CharacterGetTalentPoints(character)
 	misc["level"] = CharacterGetLevel(character)
 	data["misc"] = misc
+
+	local hotbar = GetHotbar(character)
+	UnequipCharacter(character)
+	--SaveEquippedItems(character)
+	--Save inventory
+	InitSavingInventory(character)
+	local inventory = char.GetInventoryItems(char)
+	for i,item in pairs(inventory) do
+		Ext.Print(character, item)
+		StoreHolderItem(character, item)
+	end
 	
+	-- Talents
+	local talentsStrings = Talents()
+	
+	local talents = {}
+	for ind,tal in ipairs(talentsStrings) do
+		local cur = CharacterHasTalent(character, tal)
+		if cur ~= 0 then
+			talents[tal] = 1
+		end
+		CharacterRemoveTalent(character, tal)
+	end
+	data["talents"] = talents
 	
 	-- Attributes
 	local attributes = {}
@@ -85,16 +107,14 @@ function SaveCharacterData(character)
 	"Intelligence", 
 	"Constitution", 
 	"Memory", 
-	"Wits",
-	"Experience"}
+	"Wits"
+	}
 	--local attributes = "--Attributes\r\n"
 	for ind,att in ipairs(attributeStrings) do
-		local cur = ""
-		if att == "Experience" then cur = NRD_CharacterGetStatInt(character, "Experience")
-		else cur = CharacterGetBaseAttribute(character, att) end
-		attributes[att] = cur
+		attributes[att] = char.Stats["Base"..att]
 		--attributes = attributes..cur.."\r\n"
 	end
+	attributes["Experience"] = NRD_CharacterGetStatInt(character, "Experience")
 	attributes["MaxMP"] = GetVarInteger(character, "LX_Max_SP")
 	data["attributes"] = attributes
 	--attributes = ParseDataList(character, attributeStrings, CharacterGetBaseAttribute(), "--Attributes\r\n")
@@ -120,27 +140,11 @@ function SaveCharacterData(character)
 		end
 	end
 	data["civil"] = civil
-	
-	-- Talents
-	local talentsStrings = Talents()
-	
-	local talents = {}
-	for ind,tal in ipairs(talentsStrings) do
-		local cur = CharacterHasTalent(character, tal)
-		if cur ~= 0 then
-			talents[tal] = 1
-		end
+
+	for tal,value in pairs(data.talents) do
+		NRD_PlayerSetBaseTalent(character, tal, 1)
 	end
-	data["talents"] = talents
-	
-	--SaveEquippedItems(character)
-	--Save inventory
-	InitSavingInventory(character)
-	local inventory = char.GetInventoryItems(char)
-	for i,item in pairs(inventory) do
-		Ext.Print(character, item)
-		StoreHolderItem(character, item)
-	end
+	CharacterAddCivilAbilityPoint(character, 0)
 	
 	--Save part
 	local clearedName = ClearSpecialCharacters(char.DisplayName)
@@ -148,7 +152,7 @@ function SaveCharacterData(character)
 	print(path)
 	local characterData = {}
 	--local hotbar = GetHotbar(character)
-	characterData["hotbar"] = Ext.JsonParse(GetVarString(character, "LX_Hotbar"))
+	characterData["hotbar"] = hotbar
 	characterData["data"] = data
 	characterData["inventory"] = inventoryTemplates
 	local skills = char.GetSkills(char)

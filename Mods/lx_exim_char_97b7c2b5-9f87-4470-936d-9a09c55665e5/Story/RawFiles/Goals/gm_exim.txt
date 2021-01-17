@@ -68,9 +68,9 @@ AND
 GetPosition(_Char, _X, _Y, _Z)
 // AND
 // TemporaryCharacterCreateAtPosition(_X, _Y, _Z, "25611432-e5e4-482a-8f5d-196c9e90001e", 0, _Temp)
-AND
+// AND
 //LX_EXT_UnequipCharacter(_Char) //Unequip items so skill save won't take skills given by items
-LX_EXT_SaveHotbar(_Char) //Also unequip items
+// LX_EXT_SaveHotbar(_Char) //Also unequip items
 // AND
 // LX_EXT_InitSavingInventory(_Char)
 // AND
@@ -283,19 +283,19 @@ THEN
 TimerLaunch("LX_Give_Players_Stones", 5000);
 
 //// Hotbar restoration ////
-IF
-StoryEvent((CHARACTERGUID)_Char, "LX_Restore_Hotbar")
-THEN
-DB_EXIM_Loading_Hotbar(_Char);
-TimerLaunch("LX_LoadHotbar", 500);
+// IF
+// StoryEvent((CHARACTERGUID)_Char, "LX_Restore_Hotbar")
+// THEN
+// DB_EXIM_Loading_Hotbar(_Char);
+// TimerLaunch("LX_LoadHotbar", 500);
 
-IF
-TimerFinished("LX_LoadHotbar")
-AND
-DB_EXIM_Loading_Hotbar(_Char)
-THEN
-LX_EXT_LoadHotbar(_Char);
-NOT DB_EXIM_Loading_Hotbar(_Char);
+// IF
+// TimerFinished("LX_LoadHotbar")
+// AND
+// DB_EXIM_Loading_Hotbar(_Char)
+// THEN
+// LX_EXT_LoadHotbar(_Char);
+// NOT DB_EXIM_Loading_Hotbar(_Char);
 
 
 EXITSECTION

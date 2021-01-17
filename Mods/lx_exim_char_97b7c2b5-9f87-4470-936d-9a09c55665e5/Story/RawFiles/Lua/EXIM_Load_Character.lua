@@ -1,5 +1,13 @@
+--- @type character EsvCharacter
+local function RemoveCharacterSkills(char)
+	local skills = char.GetSkills(char)
+	for i,skill in pairs(skills) do
+		CharacterRemoveSkill(char.MyGuid, skill)
+	end
+end
 
 function LoadCharacter(character)
+	local char = Ext.GetCharacter(character)
 	local handle, name = CharacterGetDisplayName(character)
 	name = ClearSpecialCharacters(name)
 	local fileName = name..".charsave"
@@ -66,23 +74,28 @@ function LoadCharacter(character)
 	end
 	
 	-- Load skills
-	SetVarString(character, "LX_Skills_Data", Ext.JsonStringify(data["skills"]))
-	SetVarString(character, "LX_Skills_Save", "")
-	SetStoryEvent(character, "LX_Start_Load_Skills")
+	-- SetVarString(character, "LX_Skills_Data", Ext.JsonStringify(data["skills"]))
+	-- SetVarString(character, "LX_Skills_Save", "")
+	-- SetStoryEvent(character, "LX_Start_Load_Skills") 
+	RemoveCharacterSkills(char)
+	for i,skill in pairs(data["skills"]) do
+		CharacterAddSkill(character, skill, 1)
+	end
 	
 	-- Load inventory
 	LoadInventory(character, data["inventory"], data["inventory"])
 	
-	SetVarString(character, "LX_Hotbar", Ext.JsonStringify(data["hotbar"]))
+	-- SetVarString(character, "LX_Hotbar", Ext.JsonStringify(data["hotbar"]))
 	-- Load hotbar
-	SetStoryEvent(character, "LX_Restore_Hotbar")
+	LoadHotbar(character, data["hotbar"])
+	-- SetStoryEvent(character, "LX_Restore_Hotbar")
 	-- for i, slot in pairs(data["hotbar"]) do
-		-- if slot[1] == "Item" then
-			-- NRD_SkillBarSetItem(character, tonumber(i), slot[2])
-		-- else
-			-- Ext.Print(i)
-			-- NRD_SkillBarSetSkill(character, tonumber(i), slot[2])
-		-- end
+	-- 	if slot[1] == "Item" then
+	-- 		NRD_SkillBarSetItem(character, tonumber(i), slot[2])
+	-- 	else
+	-- 		Ext.Print(i)
+	-- 		NRD_SkillBarSetSkill(character, tonumber(i), slot[2])
+	-- 	end
 	-- end
 end
 
@@ -107,9 +120,9 @@ function ClearTalents(character)
 	end
 end
 
-function LoadHotbar(character)
+function LoadHotbar(character, hotbar)
 	ClearHotbar(character)
-	local hotbar = Ext.JsonParse(GetVarString(character, "LX_Hotbar"))
+	-- local hotbar = Ext.JsonParse(GetVarString(character, "LX_Hotbar"))
 	for i, slot in pairs(hotbar) do
 		if slot[1] == "Item" then
 			local isInInventory = ItemTemplateIsInCharacterInventory(character, slot[2])
