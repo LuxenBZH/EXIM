@@ -166,7 +166,9 @@ function ItemSetBoosts(item, boosts)
 		elseif boost == "Talents" then
 			for talent, v in pairs(value) do NRD_ItemSetPermanentBoostTalent(item, talent, 1) end
 		elseif boost == "Abilities" then
-			for abi, v in pairs(value) do NRD_ItemSetPermanentBoostAbility(item, abi, v) end	
+			for abi, v in pairs(value) do NRD_ItemSetPermanentBoostAbility(item, abi, v) end
+		elseif boost == "Civil" then
+			for civ, v in pairs(value) do NRD_ItemSetPermanentBoostAbility(item, civ, v) end
 		elseif boost == "WeaponRange" or boost == "CleavePercentage" then
 			NRD_ItemSetPermanentBoostReal(item, boost, value)
 		elseif boost == "Skills" or boost == "ItemColor" then

@@ -16,3 +16,10 @@ Fixes
 
 Known issues
 * Cannot save any ability boost but will fixed as soon as they will be available in the extender
+
+# 1.1.7.10
+Fixes
+* The crash issue on ~80% game save loading after using the loading stone on a character is no more !
+* Custom items names that weren't saved in GM mode are fixed
+* When loading a character the previously known skills get correctly wiped
+* You can now correctly save and load Civil abilities boosts on items

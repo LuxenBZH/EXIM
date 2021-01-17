@@ -121,6 +121,7 @@ function ClearTalents(character)
 end
 
 function LoadHotbar(character, hotbar)
+	if CharacterIsPlayer(character) == 0 then return end
 	ClearHotbar(character)
 	-- local hotbar = Ext.JsonParse(GetVarString(character, "LX_Hotbar"))
 	for i, slot in pairs(hotbar) do

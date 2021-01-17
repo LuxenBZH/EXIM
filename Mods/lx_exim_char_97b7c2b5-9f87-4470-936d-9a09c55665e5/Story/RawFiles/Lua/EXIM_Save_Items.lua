@@ -125,7 +125,11 @@ function SaveEquipmentBonuses(item, tab)
 	tab["deltamods"] = GetDeltaMods(item)
 	tab["runes"] = GetRunes(item, tab["deltamods"])
 	tab["seed"] = seed
-	tab["customname"] = string.gsub(itemEx.DisplayName, "|", "")
+	if Ext.GetGameMode() == "Campaign" then
+		tab["customname"] = string.gsub(itemEx.DisplayName, "|", "")
+	else
+		tab["customname"] = string.gsub(itemEx.CustomDisplayName, "|", "")
+	end
 	
 	local value = nil
 	for i,boost in pairs(boosts) do
@@ -152,10 +156,16 @@ function SaveEquipmentBonuses(item, tab)
 		local value = NRD_ItemGetPermanentBoostAbility(item, abi)
 		if value ~= 0 then abilities[abi] = value end
 	end
+	local civil = {}
+	for i, civ in pairs(Civil()) do
+		local value = NRD_ItemGetPermanentBoostAbility(item, civ)
+		if value ~= 0 then civil[civ] = value end
+	end
 	if skills ~= "" or skills ~= nil then
 		tab["boosts"]["Skills"] = skills
 		tab["boosts"]["Talents"] = talents
 		tab["boosts"]["Abilities"] = abilities
+		tab["boosts"]["Civil"] = civil
 	end
 	return tab
 end
