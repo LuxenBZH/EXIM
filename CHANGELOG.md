@@ -23,3 +23,16 @@ Fixes
 * Custom items names that weren't saved in GM mode are fixed
 * When loading a character the previously known skills get correctly wiped
 * You can now correctly save and load Civil abilities boosts on items
+
+# 1.1.8.11
+Fixes
+* Fixed the issue where equipment names wouldn't be correctly restored in GM mode
+* Fixed the runes inserted in sockets not being saved
+* Equipment visuals progression are now correctly restored at even level
+
+# 1.1.8.12
+Fixes
+* Fixed an issue with Unique items crashing the game when loading
+* Fixed an issue with quality above Epic that turns into Epic when reloading a map or a save
+* Fixed an issue with items without delta modifiers rolling new ones
+* Attributes permanent boosts are now not included in the base pool

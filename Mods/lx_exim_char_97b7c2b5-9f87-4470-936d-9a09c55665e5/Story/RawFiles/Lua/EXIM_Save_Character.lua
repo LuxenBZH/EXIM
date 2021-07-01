@@ -61,6 +61,16 @@ local function GetHotbar(character)
 	return hotbar
 end
 
+local function RetrieveCustomStats(character)
+	local data = {}
+	local stats = Ext.GetAllCustomStats()
+	for i,uuid in pairs(stats) do
+		local name = Ext.GetCustomStatById(uuid).Name
+		data[name] = NRD_CharacterGetCustomStat(character, uuid)
+	end
+	return data
+end
+
 function SaveCharacterData(character)
 	local char = Ext.GetCharacter(character)
 	print("Storing character data...")
@@ -102,16 +112,16 @@ function SaveCharacterData(character)
 	-- Attributes
 	local attributes = {}
 	local attributeStrings = {
-	"Strength", 
-	"Finesse", 
-	"Intelligence", 
-	"Constitution", 
-	"Memory", 
-	"Wits"
+		"Strength", 
+		"Finesse", 
+		"Intelligence", 
+		"Constitution", 
+		"Memory", 
+		"Wits"
 	}
 	--local attributes = "--Attributes\r\n"
 	for ind,att in ipairs(attributeStrings) do
-		attributes[att] = char.Stats["Base"..att]
+		attributes[att] = char.Stats["Base"..att] - NRD_CharacterGetPermanentBoostInt(character, att)
 		--attributes = attributes..cur.."\r\n"
 	end
 	attributes["Experience"] = NRD_CharacterGetStatInt(character, "Experience")
@@ -146,7 +156,7 @@ function SaveCharacterData(character)
 	end
 	CharacterAddCivilAbilityPoint(character, 0)
 	
-	--Save part
+	-- Save part
 	local clearedName = ClearSpecialCharacters(char.DisplayName)
 	local path = clearedName..".charsave"
 	print(path)
@@ -157,6 +167,9 @@ function SaveCharacterData(character)
 	characterData["inventory"] = inventoryTemplates
 	local skills = char.GetSkills(char)
 	characterData["skills"] = skills
+	local customStats = RetrieveCustomStats(character)
+	Ext.Dump(customStats)
+	characterData["customStats"] = customStats
 	
 	-- Extension data
 	local extData = GetVarString(character, "LX_EXIM_Extension_Data")

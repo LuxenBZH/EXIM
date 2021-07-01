@@ -6,6 +6,16 @@ local function RemoveCharacterSkills(char)
 	end
 end
 
+local function LoadCustomStats(character, stats)
+	if stats == nil then return end
+	for name,value in pairs(stats) do
+		local stat = Ext.GetCustomStatByName(name)
+		if stat ~= nil then
+			NRD_CharacterSetCustomStat(character.MyGuid, stat.Id, value)
+		end
+	end
+end
+
 function LoadCharacter(character)
 	local char = Ext.GetCharacter(character)
 	local handle, name = CharacterGetDisplayName(character)
@@ -45,9 +55,11 @@ function LoadCharacter(character)
 	-- NRD_PlayerSetBaseAttribute(character, "Memory", data["data"]["attributes"]["Memory"])
 	-- NRD_PlayerSetBaseAttribute(character, "Wits", data["data"]["attributes"]["Wits"])
 	
-	for attribute,value in pairs(data["data"]["attributes"]) do
-		if attribute ~= "Experience" and attribute ~= "MaxMP" then
-			NRD_PlayerSetBaseAttribute(character, attribute, value)
+	if CharacterIsPlayer(character) == 1 then
+		for attribute,value in pairs(data["data"]["attributes"]) do
+			if attribute ~= "Experience" and attribute ~= "MaxMP" then
+				NRD_PlayerSetBaseAttribute(character, attribute, value)
+			end
 		end
 	end
 	if data["data"]["attributes"]["MaxMP"] ~= nil then 
@@ -81,6 +93,9 @@ function LoadCharacter(character)
 	for i,skill in pairs(data["skills"]) do
 		CharacterAddSkill(character, skill, 1)
 	end
+
+	-- Load custom stats
+	LoadCustomStats(char, data["customStats"])
 	
 	-- Load inventory
 	LoadInventory(character, data["inventory"], data["inventory"])
@@ -100,6 +115,7 @@ function LoadCharacter(character)
 end
 
 function ClearCivil(character)
+	if CharacterIsPlayer(character) == 0 then return end
 	local civil = Civil()
 	for i,civ in pairs(civil) do
 		NRD_PlayerSetBaseAbility(character, civ, 0)
@@ -107,6 +123,7 @@ function ClearCivil(character)
 end
 
 function ClearAbilities(character)
+	if CharacterIsPlayer(character) == 0 then return end
 	local abilities = Abilities()
 	for i,abi in pairs(abilities) do
 		NRD_PlayerSetBaseAbility(character, abi, 0)
@@ -114,6 +131,7 @@ function ClearAbilities(character)
 end
 
 function ClearTalents(character)
+	if CharacterIsPlayer(character) == 0 then return end
 	local talents = Talents()
 	for i,talent in pairs(talents) do
 		NRD_PlayerSetBaseTalent(character, talent, 0)

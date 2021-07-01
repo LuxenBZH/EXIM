@@ -123,12 +123,16 @@ function SaveEquipmentBonuses(item, tab)
 	tab["level"] = itemLevel
 	tab["boosts"] = {}
 	tab["deltamods"] = GetDeltaMods(item)
-	tab["runes"] = GetRunes(item, tab["deltamods"])
+	tab["runes"] = GetRunes(item)
 	tab["seed"] = seed
 	if Ext.GetGameMode() == "Campaign" then
 		tab["customname"] = string.gsub(itemEx.DisplayName, "|", "")
 	else
-		tab["customname"] = string.gsub(itemEx.CustomDisplayName, "|", "")
+		if itemEx.CustomDisplayName == "" then
+			tab["customname"] = string.gsub(itemEx.DisplayName, "|", "")
+		else
+			tab["customname"] = string.gsub(itemEx.CustomDisplayName, "|", "")
+		end
 	end
 	
 	local value = nil
@@ -192,12 +196,15 @@ function GetDeltaMods(item)
 end
 
 
-function GetRunes(item, deltaMods)
+function GetRunes(item)
 	local runes = {}
-	local nbSlots = Ext.GetItem(item).Stats.RuneSlots
+	-- local nbSlots = Ext.GetItem(item).Stats.RuneSlots
+	local nbSlots = 3
+	-- Ext.Print("Runes slots",nbSlots)
 	if nbSlots ~= 0 then
-		for slot=0,nbSlots,1 do
+		for slot=0,nbSlots-1,1 do
 			local rune = ItemGetRuneItemTemplate(item, slot)
+			-- Ext.Print("Rune",slot,rune)
 			if rune ~= nil then runes[slot] = rune end
 		end
 	end

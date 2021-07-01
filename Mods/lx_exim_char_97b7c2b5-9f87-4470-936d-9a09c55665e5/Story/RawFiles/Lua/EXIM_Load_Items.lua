@@ -114,9 +114,12 @@ function EquipmentClone(item, amount, quality, level, deltamods, seed, statsID, 
 	end
 	if seed ~= nil then NRD_ItemCloneSetInt("GenerationRandom", seed) end
 	NRD_ItemCloneSetString("GenerationStatsId", statsID)
-	if quality == "Unique" and recursion == false then
-		NRD_ItemCloneSetString("GenerationItemType", "Divine")
-		NRD_ItemCloneSetString("ItemType", "Divine")
+	if (quality == "Unique" or quality == "Divine" or quality == "Legendary") and recursion == false then
+		NRD_ItemCloneSetString("GenerationItemType", "Epic")
+		NRD_ItemCloneSetString("ItemType", quality)
+	-- elseif quality == "Unique" or quality == "Divine" or quality == "Legendary" then
+	-- 	NRD_ItemCloneSetString("GenerationItemType", "Epic")
+	-- 	NRD_ItemCloneSetString("ItemType", quality)
 	else
 		NRD_ItemCloneSetString("GenerationItemType", quality)
 		NRD_ItemCloneSetString("ItemType", quality)
@@ -126,8 +129,13 @@ function EquipmentClone(item, amount, quality, level, deltamods, seed, statsID, 
 	NRD_ItemCloneSetInt("HasGeneratedStats", 1)
 	NRD_ItemCloneSetInt("Amount", amount)
 	NRD_ItemCloneSetInt("GMFolding", 0)
-	--NRD_ItemCloneResetProgression()
+	if not recursion then
+		NRD_ItemCloneResetProgression()
+	end
 	if deltamods ~= nil then
+		if #deltamods == 0 then
+			NRD_ItemCloneAddBoost("Generation", "LXN_EmptyDM")
+		end
 		for dm,nb in pairs(deltamods) do
 			local i = 0
 			while i < nb do
@@ -138,7 +146,7 @@ function EquipmentClone(item, amount, quality, level, deltamods, seed, statsID, 
 	end
 	
 	local newItem = NRD_ItemClone()
-	if quality == "Unique" and recursion == false then
+	if (quality == "Unique" or quality == "Divine" or quality == "Legendary") and recursion == false then
 		newItem = EquipmentClone(newItem, amount, quality, level, nil, seed, statsID, customStrings, true)
 	end
 	ItemRemove(item)
